@@ -1,54 +1,37 @@
-import sys
+# Sample Input (paste this when running)
+# 1
+# 3 50
+# 60 10
+# 100 20
+# 120 30
 
-def solve():
-    # Use sys.stdin.read to handle large inputs quickly
-    input_data = sys.stdin.read().split()
-    
-    if not input_data:
-        return
+t = int(input())
 
-    iterator = iter(input_data)
-    
-    # Get number of test cases
-    try:
-        T = int(next(iterator))
-    except StopIteration:
-        return
+for _ in range(t):
+    n, W = map(int, input().split())
+    items = []
 
-    for _ in range(T):
-        # Read N (items) and W (capacity)
-        N = int(next(iterator))
-        W = int(next(iterator))
-        
-        items = []
-        
-        # Read all items
-        for _ in range(N):
-            val = int(next(iterator))
-            wt = int(next(iterator))
-            # Store as tuple: (value, weight, ratio)
-            # We calculate ratio immediately for sorting
-            items.append((val, wt, val / wt))
-            
-        # GREEDY STEP: Sort by ratio (index 2) in Descending order
-        items.sort(key=lambda x: x[2], reverse=True)
-        
-        total_value = 0.0
-        current_weight = 0
-        
-        for val, wt, ratio in items:
-            if current_weight + wt <= W:
-                # If we can take the whole item, take it
-                current_weight += wt
-                total_value += val
-            else:
-                # If we can't take the whole item, take a fraction
-                remaining_capacity = W - current_weight
-                total_value += val * (remaining_capacity / wt)
-                break # Knapsack is full, we are done
-        
-        # Output formatted to exactly 6 decimal places
-        print(f"{total_value:.6f}")
+    for _ in range(n):
+        v, w = map(int, input().split())
+        items.append((v / w, v, w))  # (ratio, value, weight)
 
-if __name__ == "__main__":
-    solve()
+    # sort by ratio descending
+    items.sort(key=lambda x: x[0], reverse=True)
+
+    total_value = 0.0
+    capacity = W
+
+    for ratio, value, weight in items:
+        if capacity == 0:
+            break
+
+        if weight <= capacity:
+            total_value += value
+            capacity -= weight
+        else:
+            total_value += ratio * capacity
+            break
+
+    print(f"{total_value:.6f}")
+
+# Output : 240.000000
